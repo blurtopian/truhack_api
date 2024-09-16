@@ -1,29 +1,20 @@
 const _ = require('lodash');
 
-const add_contributions = ({ Contribution }, { config }) => async (req, res, next) => {
-  console.log('add_contributions req.body', req.body)
+const add_sentiments = ({ Sentiment }, { config }) => async (req, res, next) => {
+  console.log('add_sentiments req.body', req.body)
   const { data } = req.body;
   console.log('data', data)
-  const { contributions } = data;
+  const { sentiments } = data;
 
   try {
-    const items = await contributions.map(async (item) => {
-      const newItem = new Contribution();
-      _.extend(newItem, {
-        source: item.source,
-        id: item.id,
-        type: item.type,
-        grade: item.grade,
-        hash: item.sha,
-        author: item.author,
-        committer: item.committer,
-        repo: item.repo,
-      })
+    const items = await sentiments.map(async (item) => {
+      const newItem = new Sentiment();
+      _.extend(newItem, ...item)
       return newItem;
     });
 
-    const result = await Contribution.insertMany(items, { ordered: false });
-    return res.status(200).send({ success: true, message: 'Countries added!', result });
+    const result = await Sentiment.insertMany(items, { ordered: false });
+    return res.status(200).send({ success: true, message: 'Items added!', result });
     // Promise.all(items)
     //   .then(async response => {
     //     const result = await Contribution.insertMany(response, { ordered: false });

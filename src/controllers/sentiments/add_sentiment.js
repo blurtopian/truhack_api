@@ -1,9 +1,9 @@
 const { sendOne } = require('../../middleware');
 const _ = require('lodash');
 
-const add_contribution = ({ Contribution }, { config }) => async (req, res, next) => {
+const add_sentiment = ({ Sentiment }, { config }) => async (req, res, next) => {
   try {
-    const newItem = new Contribution();
+    const newItem = new Sentiment();
     let body = req.body
     Object.keys(body).forEach((key) => (_.isEmpty(body[key])) && delete body[key]);
     _.extend(newItem, body);
@@ -16,4 +16,4 @@ const add_contribution = ({ Contribution }, { config }) => async (req, res, next
   }
 };
 
-module.exports= { add_contribution };
+module.exports= { add_sentiment };
