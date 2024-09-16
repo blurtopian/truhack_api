@@ -7,15 +7,15 @@ const SentimentsAggregateSchema = new Schema({
     trim: true,
     required: true,
   },
- total_sentiments: {
+  total_sentiments: {
     type: Number,
     required: true,
   },
-  positive_sentiments: {
+  total_positive: {
     type: Number,
     required: true,
   },
-  negative_sentiments: {
+  total_negative: {
     type: Number,
     required: true,
   },

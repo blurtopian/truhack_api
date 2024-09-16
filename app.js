@@ -16,8 +16,42 @@ var mongoDb = mongoose.createConnection(
 );
 
 const { SentimentSchema, SentimentsAggregateSchema } = require('./src/schemas');
-const Sentiment = mongoDb.model('Sentiment', SentimentSchema);
 const SentimentsAggregate = mongoDb.model('SentimentsAggregate', SentimentsAggregateSchema);
+// Middleware to update aggregate collection
+SentimentSchema.post(['save', 'updateOne', 'deleteOne'], async function (doc) {
+  const sentiment_type = doc.type;
+  console.log('Updating aggregate collection for sentiment type:', sentiment_type);
+  
+  // Calculate new aggregate values
+  const aggregate = await this.model.aggregate([
+    { $match: { sentiment_type: sentiment_type } },
+    {
+      $group: {
+        _id: '$type',
+        total_positive: { $sum: '$positive' },
+        total_negative: { $sum: '$negative' },
+        total_sentiment: { $sum: '$sentiment' },
+      },
+    },
+  ]);
+  console.log('Aggregate:', aggregate);
+
+  if (aggregate.length > 0) {
+    const { total_positive, total_negative, total_sentiments } = aggregate[0];
+    
+    // Update the aggregate collection
+    await SentimentsAggregate.updateOne(
+      { type: sentiment_type },
+      {
+        total_positive,
+        total_negative,
+        total_sentiments,
+      },
+      { upsert: true }
+    );
+  }
+});
+const Sentiment = mongoDb.model('Sentiment', SentimentSchema);
 const models = { Sentiment, SentimentsAggregate };
 
 // view engine setup
