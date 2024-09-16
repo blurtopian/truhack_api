@@ -31,4 +31,4 @@ const add_sentiments = ({ Sentiment }, { config }) => async (req, res, next) => 
   }
 };
 
-module.exports= { add_contributions };
+module.exports= { add_sentiments };

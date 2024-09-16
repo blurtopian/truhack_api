@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const SentimentAggregateSchema = new Schema({
+const SentimentsAggregateSchema = new Schema({
   sentiment_type: {
     type: String,
     trim: true,
@@ -23,4 +23,4 @@ const SentimentAggregateSchema = new Schema({
   collection: 'sentiments_aggregate'
 });
 
-module.exports = { SentimentAggregateSchema };
+module.exports = { SentimentsAggregateSchema };

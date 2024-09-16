@@ -15,7 +15,7 @@ var mongoDb = mongoose.createConnection(
   (process.env.MONGODB_URI || 'mongodb://localhost:27017/truhack_db')
 );
 
-const { Sentiment, SentimentsAggregateSchema, SentimentsAggregateSchema } = require('./src/schemas');
+const { SentimentSchema, SentimentsAggregateSchema } = require('./src/schemas');
 const Sentiment = mongoDb.model('Sentiment', SentimentSchema);
 const SentimentsAggregate = mongoDb.model('SentimentsAggregate', SentimentsAggregateSchema);
 const models = { Sentiment, SentimentsAggregate };
