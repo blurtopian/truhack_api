@@ -5,6 +5,7 @@ const { errorHandler } = require('../middleware');
 // list of controllers here
 const ai = require('../controllers/ai')
 const sentiments = require('../controllers/sentiments')
+const keywords = require('../controllers/keywords')
 
 const routersInit = (config, models) => {
     const router = express();
@@ -12,6 +13,7 @@ const routersInit = (config, models) => {
     // register api points
     router.use('/ai', ai(models, { config }));
     router.use('/sentiments', sentiments(models, { config }));
+    router.use('/keywords', keywords(models, { config }));
 
     // catch all api errors
     router.use(errorHandler);

@@ -15,7 +15,8 @@ var mongoDb = mongoose.createConnection(
   (process.env.MONGODB_URI || 'mongodb://localhost:27017/truhack_db')
 );
 
-const { SentimentSchema, SentimentsAggregateSchema } = require('./src/schemas');
+const { SentimentSchema, SentimentsAggregateSchema, KeywordSchema } = require('./src/schemas');
+const Keyword = mongoDb.model('Keyword', KeywordSchema);
 const SentimentsAggregate = mongoDb.model('SentimentsAggregate', SentimentsAggregateSchema);
 // Middleware to update aggregate collection
 SentimentSchema.post(['save', 'updateOne', 'deleteOne'], async function (doc) {
@@ -52,7 +53,7 @@ SentimentSchema.post(['save', 'updateOne', 'deleteOne'], async function (doc) {
   }
 });
 const Sentiment = mongoDb.model('Sentiment', SentimentSchema);
-const models = { Sentiment, SentimentsAggregate };
+const models = { Sentiment, SentimentsAggregate, Keyword };
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
