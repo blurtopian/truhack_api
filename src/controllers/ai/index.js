@@ -1,11 +1,11 @@
 const { Router: router } = require('express');
 
-const { grade_contrib } = require('./grade_contrib');
+const { sentiment_ai } = require('./sentiment_ai');
 
 module.exports = (models, { config }) => {
   const api = router();
 
-  api.post('/', grade_contrib(models, { config }));
+  api.post('/sentiment', sentiment_ai(models, { config }));
 
   return api;
 };
