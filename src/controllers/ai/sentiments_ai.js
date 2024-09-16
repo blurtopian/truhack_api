@@ -5,20 +5,20 @@ const _ = require("lodash");
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const API_KEY = process.env.OPENAI_API_KEY;
 
-const sentiment_ai =
+const sentiments_ai =
   ({ Sentiment }, { config }) =>
   async (req, res, next) => {
     console.log("req.body:", req.body);
 
-    const { tweet } = req.body;
-    console.log("tweet:", tweet);
+    const { tweets } = req.body;
+    console.log("tweets:", tweets);
 
-    if (!tweet) {
-      return res.status(400).send('Missing tweet');
+    if (_.isEmpty(tweets)) {
+      return res.status(400).send('Missing tweets');
     }
 
     try {
-      const result = await analyzeTweet(tweet.tweets_content);
+      const result = await analyzeTweets(tweets);
       return sendOne(res, result);
     } catch (error) {
       console.log("error", error);
@@ -26,13 +26,14 @@ const sentiment_ai =
     }
   };
 
+// Function to analyze commit
+
 // Function to analyze a single tweet
-const analyzeTweet = async (text) => {
-  console.log('text', text)
+const analyzeTweets = async (tweets) => {
   try {
-    //const prompt = `Please analyze the sentiment of the following text regarding an election and only reply with one word: "positive", "negative", or "neutral". Here is the text: "${text}"`
-    //const prompt = `Analyze the sentiment of the following text regarding an election and the candidate "${candidate}". Reply only in the following JSON format: { "candidate": "candidate_name", "sentiment": "positive | negative | neutral" }. Here is the text: "${text}"`
-    const prompt = `Analyze the following text regarding an election. Extract the name of the candidate if mentioned, otherwise set the candidate to null. Additionally, return the sentiment of the text ("positive", "negative", or "neutral"). The response must be in this JSON format: { "candidate": "candidate_name or null", "sentiment": "positive | negative | neutral" }. Here is the text: "${text}"`
+    // Convert the array of texts to a format that the AI can process
+    const textData = tweets.map((tweet, index) => `${index + 1}. "${tweet.tweets_content}"`).join("\n");
+    const prompt = `Here is a list of election-related texts. For each, extract the candidate's name (if any) and the sentiment ("positive", "negative", or "neutral"). Return only those with a valid candidate name in the following JSON format: [{ "candidate": "candidate_name", "sentiment": "positive | negative | neutral" }]. Here are the texts:\n\n${textData}`
     const response = await axios.post(
       OPENAI_API_URL,
       {
@@ -41,7 +42,7 @@ const analyzeTweet = async (text) => {
           { role: "system", content: "You are a helpful assistant." },
           { role: "user", content: prompt }
         ],
-        max_tokens: 100,
+        max_tokens: 500,
       },
       {
         headers: {
@@ -50,7 +51,6 @@ const analyzeTweet = async (text) => {
         },
       }
     );
-    console.log("response.data.choices[0]:", response.data.choices[0]);
 
     const sentimentResp = response.data.choices[0].message.content.trim();
     console.log("Sentiment Analysis:", sentimentResp);
@@ -63,8 +63,8 @@ const analyzeTweet = async (text) => {
     console.error("Error analyzing sentiment:", error);
     throw error;
   }
-};
+}
 
 module.exports = {
-  sentiment_ai,
+  sentiments_ai,
 };
