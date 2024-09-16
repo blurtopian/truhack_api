@@ -33,7 +33,9 @@ const analyzeTweets = async (tweets) => {
   try {
     // Convert the array of texts to a format that the AI can process
     const textData = tweets.map((tweet, index) => `${index + 1}. "${tweet.tweets_content}"`).join("\n");
-    const prompt = `Here is a list of election-related texts. For each, extract the candidate's name (if any) and the sentiment ("positive", "negative", or "neutral"). Return only those with a valid candidate name in the following JSON format: [{ "candidate": "candidate_name", "sentiment": "positive | negative | neutral" }]. Here are the texts:\n\n${textData}`
+    console.log("textData:", textData);
+
+    const prompt = `Here is a list of election-related texts. For each, extract the candidate's name (if any) and the sentiment ("positive", "negative", or "neutral"). Return only those with a valid candidate name in the following JSON format: [{ "candidate": "candidate_name", "sentiment": "positive | negative | neutral" }]. Do not include any other text, just return the raw JSON array. Here are the texts:\n\n${textData}`;
     const response = await axios.post(
       OPENAI_API_URL,
       {
@@ -55,7 +57,7 @@ const analyzeTweets = async (tweets) => {
     const sentimentResp = response.data.choices[0].message.content.trim();
     console.log("Sentiment Analysis:", sentimentResp);
 
-    const result = JSON.parse(sentimentResp);
+    const result = JSON.parse(sentimentResp.replace("```json\n", "").replace("```", ""));
     console.log("result:", result);
 
     return result;
