@@ -25,6 +25,7 @@
     "mongose": "0.0.2-security",
     "morgan": "~1.9.0",
     "multer": "^1.4.2",
+    "openai": "^4.61.0",
     "parse-domain": "^2.3.4",
     "rest-api-errors": "^1.2.1",
     "simple-git": "^3.25.0"
