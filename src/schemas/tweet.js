@@ -1,12 +1,8 @@
+const { uniq } = require('lodash');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const TweetSchema = new Schema({
-  value: {
-    type: String,
-    trim: true,
-    required: true,
-  },
   user_name: {
     type: String,
     trim: true,
@@ -27,6 +23,7 @@ const TweetSchema = new Schema({
   tweets_id: {
     type: String,
     trim: true,
+    unique: true,
   },
   tweets_content: {
     type: String,
@@ -37,14 +34,46 @@ const TweetSchema = new Schema({
   time_read: {
     type: Date,
   },
-  comment: Number,
-  like: Number,
-  share: Number,
-  view: Number,
-  outer_media_url: [String],
-  outer_media_short_url: [String],
-  keyword: String,
-  hash: String,
+  comment: {
+    type: Number
+  },
+  like: {
+    type: Number
+  },
+  share: {
+    type: Number
+  },
+  view: {
+    type: Number
+  },
+  outer_media_url: {
+    type: [String]
+  },
+  outer_media_short_url: {
+    type: [String]
+  },
+  keyword: {
+    type: String
+  },
+  hash: {
+    type: String
+  },
+  campaign: {
+    type: String
+  },
+  tags: {
+    type: [String]
+  },
+  is_reviewed: {
+    type: Boolean,
+    default: false
+  },
+  has_candidate: {
+    type: Boolean
+  },
+  candidates: {
+    type: [String]
+  },
 });
 
 module.exports = { TweetSchema };

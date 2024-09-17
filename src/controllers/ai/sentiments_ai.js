@@ -5,8 +5,11 @@ const _ = require("lodash");
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const API_KEY = process.env.OPENAI_API_KEY;
 
-const sentiments_ai =
-  ({ Sentiment }, { config }) =>
+function stripHtml(html) {
+  return html.replace(/<\/?[^>]+(>|$)/g, "");
+}
+
+const sentiments_ai = ({ Sentiment, Tweet }, { config }) =>
   async (req, res, next) => {
     console.log("req.body:", req.body);
 
@@ -18,7 +21,10 @@ const sentiments_ai =
     }
 
     try {
-      const result = await analyzeTweets(tweets);
+      const insertDocs = await Tweet.insertMany(tweets, { ordered: false });
+      console.log("insertDocs:", insertDocs);
+
+      const result = await analyzeTweets(insertDocs);
       return sendOne(res, result);
     } catch (error) {
       console.log("error", error);
